@@ -1291,10 +1291,15 @@ static void wayland_registry_handle_global(void *data,
         wl_registry_bind(registry, name, &wl_compositor_interface,
                          MIN(version, WL_COMPOSITOR_INTERFACE_VERSION));
   } else if (g_strcmp0(interface, zwlr_layer_shell_v1_interface.name) == 0) {
+    if (version < WL_LAYER_SHELL_INTERFACE_MIN_VERSION) {
+      g_error("Minimum version of wayland layer shell interface is %u, got %u", WL_LAYER_SHELL_INTERFACE_MIN_VERSION,
+              version);
+      return;
+    }
     wayland->global_names[WAYLAND_GLOBAL_LAYER_SHELL] = name;
     wayland->layer_shell =
         wl_registry_bind(registry, name, &zwlr_layer_shell_v1_interface,
-                         MIN(version, WL_LAYER_SHELL_INTERFACE_VERSION));
+                         MIN(version, WL_LAYER_SHELL_INTERFACE_MAX_VERSION));
   } else if (g_strcmp0(interface, zwp_keyboard_shortcuts_inhibit_manager_v1_interface.name) == 0) {
     wayland->global_names[WAYLAND_GLOBAL_KEYBOARD_SHORTCUTS_INHIBITOR] = name;
     wayland->kb_shortcuts_inhibit_manager =
@@ -1596,7 +1601,7 @@ static gboolean wayland_display_late_setup(void) {
                                        ZWLR_LAYER_SURFACE_V1_ANCHOR_LEFT |
                                        ZWLR_LAYER_SURFACE_V1_ANCHOR_RIGHT);
   zwlr_layer_surface_v1_set_size(wayland->wlr_surface, 0, 0);
-  zwlr_layer_surface_v1_set_keyboard_interactivity(wayland->wlr_surface, 1);
+  zwlr_layer_surface_v1_set_keyboard_interactivity(wayland->wlr_surface, 2);
   zwlr_layer_surface_v1_add_listener(
       wayland->wlr_surface, &wayland_layer_shell_surface_listener, NULL);
 
