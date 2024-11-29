@@ -140,7 +140,7 @@ The GitHub Pages version of these directions may be out of date.  Please use
 If you don't have a checkout:
 
 ```bash
-    git clone --recursive https://github.com/DaveDavenport/rofi
+    git clone --recursive https://github.com/lbonn/rofi
     cd rofi/
 ```
 
